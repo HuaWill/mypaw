@@ -148,10 +148,25 @@
       }
     }
 
-    const m1 = new Monster(context, imageSrc, COMMON_MONSTER_DEFINITION.imgPosition, Object.assign({}, COMMON_MONSTER_DEFINITION.rect, { x: 60, y: 60 }));
-    const m2 = new Monster(context, imageSrc, COMMON_MONSTER_DEFINITION.imgPosition, Object.assign({}, COMMON_MONSTER_DEFINITION.rect, { x: 160, y: 160 }));
-    const m3 = new Monster(context, imageSrc, COMMON_MONSTER_DEFINITION.imgPosition, Object.assign({}, COMMON_MONSTER_DEFINITION.rect, { x: 260, y: 260 }));
-    const monsters = [m1, m2, m3];
+    SUPER_MONSTER_DEFINITION = {
+      imgPosition: {
+        x: 858,
+        y: 497,
+        width: 32,
+        height: 32
+      },
+      rect: {
+        width: 48,
+        height: 48
+      }
+    };
+
+    const m1 = new Monster(context, imageSrc, COMMON_MONSTER_DEFINITION.imgPosition, Object.assign({}, COMMON_MONSTER_DEFINITION.rect, { x: 20, y: 240 }));
+    const m2 = new Monster(context, imageSrc, COMMON_MONSTER_DEFINITION.imgPosition, Object.assign({}, COMMON_MONSTER_DEFINITION.rect, { x: 220, y: 120 }));
+    const m3 = new Monster(context, imageSrc, COMMON_MONSTER_DEFINITION.imgPosition, Object.assign({}, COMMON_MONSTER_DEFINITION.rect, { x: 440, y: 20 }));
+    const m4 = new Monster(context, imageSrc, SUPER_MONSTER_DEFINITION.imgPosition, Object.assign({}, SUPER_MONSTER_DEFINITION.rect, { x: 440, y: 240 }));
+
+    const monsters = [m1, m2, m3, m4];
 
     monsters.forEach(monster => monster.draw());
 
@@ -167,8 +182,8 @@
         width: 32,
         height: 32
       }, {
-        x: 250,
-        y: 150,
+        x: 20,
+        y: 20,
         width: 40,
         height: 40
       });
