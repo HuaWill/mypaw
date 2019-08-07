@@ -1,7 +1,107 @@
 (function () {
+  /**
+   * Parent for both Monster and Hero
+   * 
+   * @param {*} context 
+   * @param {*} imageSrc 
+   * @param {*} imagePosition 
+   * @param {*} rect 
+   */
+  function Sprite(context, imageSrc, imagePosition, rect) {
+    this.context = context;
+    this.imageSrc = imageSrc;
+    this.imagePosition = imagePosition;
+    this.rect = rect;
+  }
 
-  function prepare() {
+  Sprite.prototype.draw = function () {
+    let { x: imgX, y: imgY, width: imgW, height: imgH } = this.imagePosition;
+    let { x: recX, y: recY, width: recW, height: recH } = this.rect;
+    this.context.drawImage(this.imageSrc, imgX, imgY, imgW, imgH, recX, recY, recW, recH);
+  }
 
+  /**
+   * Monster Definition
+   */
+  function Monster() {
+    Sprite.apply(this, Array.prototype.slice.call(arguments));
+  }
+
+  Monster.prototype = Object.create(Sprite.prototype);
+  Monster.prototype.constructor = Monster;
+  Monster.prototype.awayFrom = function (heroRect) {
+    let { x: monsterX, y: monsterY, height: monsterH, width: monsterW } = this.rect;
+    let { x: heroX, y: heroY, height: heroH, width: heroW } = heroRect;
+    let distanceX = heroX - monsterX;
+    let distanceY = heroY - monsterY;
+
+    return distanceX <= -heroW ||       /* 英雄在魔王左侧 */
+      distanceX >= monsterW ||    /* 英雄在魔王右侧 */
+      distanceY <= -heroH ||    /* 英雄在魔王上方 */
+      distanceY >= monsterH   /* 英雄在魔王下方 */
+  }
+
+  /**
+   * Hero Definition
+   */
+  function Hero() {
+    Sprite.apply(this, Array.prototype.slice.call(arguments));
+  }
+
+  Hero.prototype = Object.create(Sprite.prototype);
+  Hero.prototype.constructor = Hero;
+  Hero.prototype.clear = function () {
+    let { x, y, width, height } = this.rect;
+    this.context.clearRect(x, y, width, height);
+  }
+  Hero.prototype.canMoveUp = function (monsters, step) {
+    let can = false;
+    let { y } = this.rect;
+    if (y - step >= 0) {    // 英雄往上不会移出画布
+      can = monsters.every(monster => monster.awayFrom(Object.assign({}, this.rect, { y: y - step })));
+    }
+
+    return can;
+  }
+  Hero.prototype.canMoveDown = function (monsters, step) {
+    let can = false;
+    let { y, height } = this.rect;
+    let { height: canvasH } = this.context.canvas;
+    if (y + height + step <= canvasH) {    // 英雄往下不会移出画布
+      can = monsters.every(monster => monster.awayFrom(Object.assign({}, this.rect, { y: y + step })));
+    }
+
+    return can;
+  }
+  Hero.prototype.canMoveLeft = function (monsters, step) {
+    let can = false;
+    let { x } = this.rect;
+    if (x - step >= 0) {    // 英雄往左不会移出画布
+      can = monsters.every(monster => monster.awayFrom(Object.assign({}, this.rect, { x: x - step })));
+    }
+
+    return can;
+  }
+  Hero.prototype.canMoveRight = function (monsters, step) {
+    let can = false;
+    let { x, width } = this.rect;
+    let { width: canvasW } = this.context.canvas;
+
+    if (x + width + step <= canvasW) {  // 英雄往右不会移出画布
+      can = monsters.every(monster => monster.awayFrom(Object.assign({}, this.rect, { x: x + step })));
+    }
+
+    return can;
+  }
+
+
+
+  const prepare = () => {
+    /**
+     * common function to load image
+     * @param {*} img 
+     * @param {*} src 
+     */
     const imgTask = (img, src) => {
       return new Promise(function (resolve, reject) {
         img.onload = resolve;
@@ -31,217 +131,86 @@
     };
   }
 
-  function drawHero(context, heroImg, allSpriteImg) {
-
-    var draw = function () {
-      this.context.drawImage(
-        this.img,
-        this.imgPos.x,
-        this.imgPos.y,
-        this.imgPos.width,
-        this.imgPos.height,
-        this.rect.x,
-        this.rect.y,
-        this.rect.width,
-        this.rect.height
-      );
-    }
-
-    var clear = function () {
-      this.context.clearRect(
-        this.rect.x,
-        this.rect.y,
-        this.rect.width,
-        this.rect.height
-      );
-    }
-
-    let canHeroMoveUp = (step) => {
-      let can = false;
-      let { y: heroY } = hero.rect;
-      if (heroY - step >= 0) {    // 英雄往上不会移出画布
-        can = monsters.every(monster => monster.awayFrom(Object.assign({}, hero.rect, {y: heroY - step})));
+  const drawMonsters = (context, imageSrc) => {
+    /**
+     * Monster definition for canvas
+     */
+    const COMMON_MONSTER_DEFINITION = {
+      imgPosition: {
+        x: 858,
+        y: 529,
+        width: 32,
+        height: 32
+      },
+      rect: {
+        width: 40,
+        height: 40
       }
-
-      return can;
     }
 
-    let canHeroMoveDown = (step) => {
-      let can = false;
-      let { y: heroY, height: heroHeight } = hero.rect;
-      let { height: canvasHeight } = context.canvas;
+    const m1 = new Monster(context, imageSrc, COMMON_MONSTER_DEFINITION.imgPosition, Object.assign({}, COMMON_MONSTER_DEFINITION.rect, { x: 60, y: 60 }));
+    const m2 = new Monster(context, imageSrc, COMMON_MONSTER_DEFINITION.imgPosition, Object.assign({}, COMMON_MONSTER_DEFINITION.rect, { x: 160, y: 160 }));
+    const m3 = new Monster(context, imageSrc, COMMON_MONSTER_DEFINITION.imgPosition, Object.assign({}, COMMON_MONSTER_DEFINITION.rect, { x: 260, y: 260 }));
+    const monsters = [m1, m2, m3];
 
-      if (heroY + heroHeight + step <= canvasHeight) {    // 英雄往下不会移出画布
-        can = monsters.every(monster => monster.awayFrom(Object.assign({}, hero.rect, {y: heroY + step})));
-      }
+    monsters.forEach(monster => monster.draw());
 
-      return can;
-    }
+    return monsters;
+  }
 
-    let canHeroMoveLeft = (step) => {
-      let can = false;
-      let { x: heroX } = hero.rect;
-
-      if (heroX - step >= 0) {    // 英雄往左不会移出画布
-        can = monsters.every(monster => monster.awayFrom(Object.assign({}, hero.rect, {x: heroX - step})));
-      }
-
-      return can;
-    }
-
-    let canHeroMoveRight = (step) => {
-      let can = false;
-      let { x: heroX, width: heroWidth } = hero.rect;
-      let { width: canvasWidth } = context.canvas;
-
-      if (heroX + heroWidth + step <= canvasWidth) {
-        can = monsters.every(monster => monster.awayFrom(Object.assign({}, hero.rect, {x: heroX + step})));
-      }
-
-      return can;
-    }
-
-    let awayFrom = function (heroRect) {
-      let { x: monsterX, y: monsterY, height: monsterH, width: monsterW } = this.rect;
-      let { x: heroX, y: heroY, height: heroH, width: heroW } = heroRect;
-      let distanceX = heroX - monsterX;
-      let distanceY = heroY - monsterY;
-
-      return distanceX <= -heroW ||       /* 英雄在魔王左侧 */
-              distanceX >= monsterW ||    /* 英雄在魔王右侧 */
-                distanceY <= -heroH ||    /* 英雄在魔王上方 */
-                  distanceY >= monsterH   /* 英雄在魔王下方 */
-    }
-
-    var hero = {
-      img: heroImg,
-      context: context,
-      imgPos: {
+  const drawHero = (context, imageSrc) => {
+    const h = new Hero(
+      context,
+      imageSrc, {
         x: 0,
         y: 0,
         width: 32,
         height: 32
-      },
-
-      rect: {
+      }, {
         x: 250,
         y: 150,
         width: 40,
         height: 40
-      },
+      });
 
-      draw: draw,
-      clear: clear,
-      canHeroMoveDown: canHeroMoveDown,
-      canHeroMoveUp: canHeroMoveUp,
-      canHeroMoveLeft: canHeroMoveLeft,
-      canHeroMoveRight: canHeroMoveRight
-    };
-
-    var monster1 = {
-      img: allSpriteImg,
-      context: context,
-      imgPos: {
-        x: 858,
-        y: 529,
-        width: 32,
-        height: 32
-      },
-
-      rect: {
-        x: 60,
-        y: 60,
-        width: 40,
-        height: 40
-      },
-
-      draw: draw,
-      awayFrom: awayFrom
-    };
-
-    var monster2 = {
-      img: allSpriteImg,
-      context: context,
-      imgPos: {
-        x: 858,
-        y: 529,
-        width: 32,
-        height: 32
-      },
-
-      rect: {
-        x: 180,
-        y: 160,
-        width: 40,
-        height: 40
-      },
-
-      draw: draw,
-      awayFrom: awayFrom
-    };
-
-    var monster3 = {
-      img: allSpriteImg,
-      context: context,
-      imgPos: {
-        x: 858,
-        y: 529,
-        width: 32,
-        height: 32
-      },
-
-      rect: {
-        x: 300,
-        y: 220,
-        width: 40,
-        height: 40
-      },
-
-      draw: draw,
-      awayFrom: awayFrom
-    };
-
-    var monsters = [monster1, monster2, monster3];
-    monsters.forEach(monster => monster.draw());
-
-    hero.draw();
-
-    return hero;
+      h.draw();
+      return h;
   }
 
-  const KEYMAP = {
+  const KEY = {
     UP: 38,
     DOWN: 40,
     LEFT: 37,
     RIGHT: 39
   }
 
-  var resourceManager = prepare();
-  resourceManager.getResource(function (context, heroImg, allSpriteImg) {
-    var hero = drawHero(context, heroImg, allSpriteImg);
-    var step = 10;
+  prepare().getResource((context, heroImg, allSpriteImg) => {
+    let hero = drawHero(context, heroImg);
+    let monsters = drawMonsters(context, allSpriteImg);
+    let step = 10;
+
     document.body.addEventListener('keyup', (evt) => {
       switch (evt.keyCode) {
-        case KEYMAP.UP:
-          if (hero.canHeroMoveUp(step)) {
+        case KEY.UP:
+          if (hero.canMoveUp(monsters, step)) {
             hero.clear();
             hero.rect.y -= step;
           }
           break;
-        case KEYMAP.DOWN:
-          if (hero.canHeroMoveDown(step)) {
+        case KEY.DOWN:
+          if (hero.canMoveDown(monsters, step)) {
             hero.clear();
             hero.rect.y += step;
           }
           break;
-        case KEYMAP.LEFT:
-          if (hero.canHeroMoveLeft(step)) {
+        case KEY.LEFT:
+          if (hero.canMoveLeft(monsters, step)) {
             hero.clear();
             hero.rect.x -= step;
           }
           break;
-        case KEYMAP.RIGHT:
-          if (hero.canHeroMoveRight(step)) {
+        case KEY.RIGHT:
+          if (hero.canMoveRight(monsters, step)) {
             hero.clear();
             hero.rect.x += step;
           }
