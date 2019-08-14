@@ -1,3 +1,3 @@
 # 魔塔
 
-![avatar](/images/mota.png)
+# 头条
