@@ -1,6 +1,4 @@
-// import {SERVER_PORT} from '../server/index';
-
-const SERVER_PORT = '8081';
+const SERVER_PORT = '8081'; // keep it same with the PORT definition in server/index.js
 
 /**
  * @desc request封装

@@ -10,5 +10,3 @@ routes.initialAppRouters(app);
 const SERVER_PORT = '8081';
 app.set('port', SERVER_PORT);
 app.listen(app.get('port'));
-
-// exports.SERVER_PORT = SERVER_PORT;
