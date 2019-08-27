@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="toolbar">
-      <span class="backBtn" v-on:click="$emit('more', 'hide')"><a></a></span>
+      <!-- <span class="backBtn" v-on:click="$emit('more', 'hide')"><a></a></span> -->
+      <router-link to="/page">
+        <a>返回</a>
+      </router-link>
       <span class="title">
         <a href>频道管理</a>
       </span>
@@ -16,7 +19,10 @@
 
 <script>
   export default {
-    props: ["tabs"]
+    props: ["tabs"],
+    created() {
+      console.log("router in setting:", this.$route);
+    }
   };
 </script>
 

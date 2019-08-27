@@ -51,7 +51,7 @@ export default {
         //         ),
         //     loading: Loading
         // }),
-        settingView: () => import('../components/setting.vue'),
+        settingView: () => import('./setting.vue'),
         ...convertPlainObject(components)
     },
 
@@ -135,7 +135,9 @@ export default {
             if (event === 'hide') {
                 this.page = 'tabView';
             } else {
-                this.page = 'settingView';
+                this.$router.push('/setting');
+                // window.location.hash = '#/setting';
+                // this.page = 'settingView';
             }
         }
     }
