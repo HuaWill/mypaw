@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="app"></div>
+    <script type="text/javascript">
+
+      function proxy(target, data, key) {
+        Object.defineProperty(target, key, {
+          get() {
+            return data[key];
+          },
+          set(value) {
+            data[key] = value;
+          }
+        });
+      }
+
+      function replaceChild(newElement, oldElement) {
+        return oldElement.parentNode.replaceChild(newElement, oldElement);
+      }
+
+      class ObserverHelper {
+        static walk(obj) {
+          Object.keys(obj).forEach(key => {
+            if (typeof obj[key] === 'object' && obj[key] !== null) {
+              ObserverHelper.walk(obj[key]);
+            }
+            ObserverHelper.defineReactive(obj, key, obj[key]);
+
+          });
+          return obj;
+        }
+
+        static defineReactive(target, key, value) {
+          let dep = new Dependency();
+          let observer = ObserverHelper.ObserverInstance;
+          Object.defineProperty(target, key, {
+            get() {
+              observer && dep.addObserver(observer);
+              return value;
+            },
+            set(newValue) {
+              value = newValue;
+              dep.notifyAll();
+            }
+          })
+        }
+      }
+
+      ObserverHelper.ObserverInstance = null;
+
+      class Dependency {
+        constructor() {
+          this.observers = [];
+        }
+        addObserver = function (observer) {
+          if (this.observers.indexOf(observer) === -1) {
+            this.observers.push(observer);
+          }
+        }
+        notifyAll = function () {
+          let observers = this.observers.slice();
+          observers.forEach((observer) => observer.update());
+        }
+      }
+
+      class Observer {
+        constructor(options) {
+          this.updateHandler = options.updateHandler;
+        }
+        update() {
+          this.updateHandler && this.updateHandler();
+        }
+      }
+
+      class Vue {
+        constructor(options) {
+          this.$el = document.querySelector(options.el);
+          this._data = typeof options.data === 'function' ? options.data() : {};
+          this.render = options.render;
+
+          ObserverHelper.ObserverInstance = new Observer({updateHandler: () => {this._render();}});
+          ObserverHelper.walk(this._data);
+          ObserverHelper.ObserverInstance = null;
+
+          for (let key in this._data) {
+            proxy(this, this._data, key);
+          }
+
+          this._render();
+        }
+
+        _createElement(tagName, data, children) {
+          const tag = document.createElement(tagName);
+          const {attrs} = data;
+
+          for (let attrName in attrs) {
+            tag.setAttribute(attrName, attrs[attrName]);
+          }
+
+          if (Object.prototype.toString.call(children) !== '[object Array]') {
+            let child = document.createTextNode(children);
+            tag.appendChild(child);
+          } else {
+            children.forEach(child => tag.appendChild(child));
+          }
+
+          return tag;
+        }
+
+        _render() {
+          const _el = this.render(this._createElement);
+          replaceChild(_el, this.$el);
+          this.$el = _el;
+        }
+      }
+
+      window.app = new Vue({
+        el: "#app",
+        data() {
+          return {
+            price: 100,
+            infos: {
+              title: '猪肉价格',
+              placeholder: 'AAA'
+            }
+          }
+        },
+        render(createElement) {
+          return createElement(
+            'div',
+            {
+              attrs: {
+                title: this.infos.title
+              }
+            },
+            [
+              createElement('div', {}, this.price)
+            ]
+          );
+        }
+      });
+    </script>
+  </body>
+</html>
