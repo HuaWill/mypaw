@@ -1,0 +1,21 @@
+#app .container {
+  padding: 8px;
+}
+#app #setting-btn {
+  border: 1px solid lightgray;
+}
+#app .item {
+  margin: 10px 0;
+}
+#app .item.single-pic {
+  overflow: hidden;
+}
+#app .item.single-pic img {
+  float: right;
+  margin-right: 10px;
+}
+
+#app .item.multiple-pic img {
+  width: 33%;
+  margin-top: 5px;
+}
