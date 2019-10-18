@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
-import {itemFy} from './decorator';
-import {MyColorContext} from '../index';
+import React, { Component } from 'react';
+import { itemFy } from './decorator';
+import { MyColorContext } from '../app';
 
 @itemFy
 export default class Settings extends Component {
@@ -20,7 +20,7 @@ export default class Settings extends Component {
         <MyColorContext.Consumer>
           {
             context => (
-              <ul style={{color: context.color}}>
+              <ul style={{ color: context.color }}>
                 {
                   Settings.SETTINGS.map((item, idx) => {
                     return <li key={idx}>{item}</li>

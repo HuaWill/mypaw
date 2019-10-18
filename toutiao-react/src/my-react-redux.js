@@ -46,7 +46,7 @@ export const connect = (mapStateToProps, mapDispatchToProps) => (ComponentToBeCo
 
     render() { 
       console.log('i got ：：：', this.context);
-      const mergedProps = this.computeProps(this.context.store);
+      const mergedProps = {...this.props, ...this.computeProps(this.context.store)};
       return <ComponentToBeConnected {...mergedProps} />
     }
   }

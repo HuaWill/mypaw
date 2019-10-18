@@ -1,8 +1,10 @@
 #app .container {
   padding: 8px;
 }
-#app #setting-btn {
+#app #setting-btn,
+#app #dispatch-btn {
   border: 1px solid lightgray;
+  margin-right: 5px;
 }
 #app .item {
   margin: 10px 0;
@@ -18,4 +20,36 @@
 #app .item.multiple-pic img {
   width: 33%;
   margin-top: 5px;
+}
+
+#app .app-header {
+  height: 36px;
+}
+
+#app .app-content {
+  height: calc(100vh - 52px);
+  overflow: auto;
+}
+
+#app .loginForm {
+  padding: 20px;
+}
+#app .loginForm > div {
+  margin-bottom: 8px;
+}
+#app .loginForm > div > span {
+  width: 70px;
+  display: inline-block;
+}
+#app .loginForm input {
+  border: 1px solid lightgray;
+  height: 18px;
+}
+#app .loginForm button {
+  width: 48px;
+  height: 28px;
+  font-size: 14px;
+  border: 1px solid lightgray;
+  background-color: lightgoldenrodyellow;
+  margin-top: 10px;
 }
