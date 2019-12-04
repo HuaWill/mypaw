@@ -1,2 +1,6 @@
 */node_modules
 */dist
+/toutiao-react/src-es5
+/toutiao_flutter/android
+/toutiao_flutter/ios
+/node-hapi/.env
