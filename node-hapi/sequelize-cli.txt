@@ -1,0 +1,16 @@
+初始化：
+node_modules/.bin/sequelize init (folder结构)
+
+创建DB:
+node_modules/.bin/sequelize db:create (根据env配置)
+
+创建table:
+node_modules/.bin/sequelize migration:create --name xxx (创建.js文件)
+node_modules/.bin/sequelize db:migrate
+node_modules/.bin/sequelize db:migrate:undo
+
+填充数据:
+node_modules/.bin/sequelize seed:create --name xxx (创建.js文件)
+node_modules/.bin/sequelize db:seed:all
+node_modules/.bin/sequelize db:seed:undo
+

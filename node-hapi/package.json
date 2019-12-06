@@ -16,13 +16,16 @@
     "hapi-swagger": "^7.10.0",
     "inert": "^4.2.1",
     "joi": "^13.7.0",
+    "mysql2": "^2.0.1",
     "package": "^1.0.1",
+    "sequelize": "^5.21.2",
     "supervisor": "^0.12.0",
     "vision": "^4.1.1"
   },
   "devDependencies": {
     "eslint": "^6.7.2",
     "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.18.2"
+    "eslint-plugin-import": "^2.18.2",
+    "sequelize-cli": "^5.5.1"
   }
 }
